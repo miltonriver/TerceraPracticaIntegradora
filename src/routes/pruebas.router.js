@@ -19,7 +19,7 @@ const generateProducts = () => {
 
 pruebasRouter.get("/mockingproducts", (req, res) => {
     let products = []
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 100; i++) {
         products.push(generateProducts())
     }
     res.send({
@@ -76,7 +76,7 @@ const generateUser = () => {
 
 pruebasRouter.get("/mockingusers", (req, res) => {
     let users = []
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 10; i++) {
         users.push(generateUser())
     }
     res.send({

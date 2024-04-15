@@ -28,7 +28,9 @@ if (!transport) {
     console.error("El transporte de nodemailer no se ha configurado correctamente");
 }
 
-const sendEmail = async (to, subject, html) => {
+// to, subject, html
+
+const sendEmail = async ({service = '',to='', subject='', html=''}) => {
     if (!transport) {
         console.error("transport no está definido");
         return
@@ -36,10 +38,10 @@ const sendEmail = async (to, subject, html) => {
 
     try {
         await transport.sendMail({
-            from: 'Coder test <miltonriver66@gmail.com>',
-            to,
-            subject,
-            html,
+            from: `${service}-${configObject.gmail_user}`,//'Coder test <miltonriver66@gmail.com>',
+            to: `${configObject.gmail_user}`,
+            subject: `Recordatorio para ${configObject.gmail_user}`,//falta cargar datos para el envío
+            html: '<h1> Hola Milton Manuel</h1>, <h2>Esta es tu gran oportunidad</h2>',
             attachments: [{//para agregar una imagen al mail
                 filename: 'ases.png',
                 path: __dirname + '/utils/ases.png',//ruta de la imagen

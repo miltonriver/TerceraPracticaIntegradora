@@ -107,7 +107,7 @@ class SessionController {
 
     failRegister = async (req, res) => {
         try {
-            res.send({ error: 'falla en el register' })
+            res.send({ error: 'falla en el registro' })
 
         } catch (error) {
             res.send({

@@ -1,11 +1,15 @@
-import { connect } from "mongoose";
+// import { connect } from "mongoose";
+import MongoSingleton from "./singleton.js";
 import dotenv from "dotenv";
+import program from "../utils/commander.js";
 
-dotenv.config({ path: './.env.development' })
+const { mode } = program.opts()
 
-/* const Dotenv = dotenv.config({
+// dotenv.config({ path: './.env.development' })
+
+dotenv.config({
     path: mode === "development" ? "./.env.development" : "./.env.production"
-}) */
+})
 
 export const configObject = {
     port:            process.env.PORT || 8000,
@@ -21,9 +25,10 @@ export const configObject = {
 
 const connectDB = async () => {
     try {
-        await connect(process.env.MONGO_URL)//Conexión remota
+        //await connect(process.env.MONGO_URL)//Conexión remota
         //await connect("mongodb://localhost:27017/MyDataBaseMilton") --> mongodb://127.0.0.1:27017/MyDataBaseMilton--Conexión local
-        console.log("base de datos conectada")
+        await MongoSingleton.getInstance(process.env.MONGO_URL)
+        console.log(`Trabajando en el entorno de ${process.env.MODO}`)
     } catch (error) {
         console.log(error)
     }

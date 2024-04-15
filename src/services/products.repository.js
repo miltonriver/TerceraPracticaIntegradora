@@ -1,5 +1,4 @@
 import ProductDto from "../dto/productDto.js"
-
 class ProductRepository {
     constructor(productDao){
         this.dao = productDao
@@ -16,5 +15,3 @@ class ProductRepository {
 }
 
 export default ProductRepository
-
-//minuto 2:45 hs

@@ -1,7 +1,11 @@
 // import ProductDaoMongo from "../daos/Mongo/productsDaoMongo.js";
 // import DAOFactory from "../daos/factory.js";
 import { productService } from "../services/index.js";
+import CustomError from "../services/errors/CustomError.js";
+import generateProductErrorInfo from "../services/errors/info.js";
+import EErrors from "../services/errors/enums.js";
 
+// const products = []
 class ProductController {
     constructor() {
         this.productService = productService
@@ -37,9 +41,24 @@ class ProductController {
         }
     }
 
-    createProduct = async (req, res) => {
+    createProduct = async (req, res, next) => {
         try {
             const { title, description, price, thumbnail, code, stock, status, category } = req.body;
+
+            if(!title || !price || !code || !stock) {
+                CustomError.createError({
+                    name: "Product creation error",
+                    cause: generateProductErrorInfo({
+                        title,
+                        price,
+                        code,
+                        stock
+                    }),
+                    message: "Error trying to create product",
+                    code: EErrors.INVALID_TYPES_ERROR
+                })                
+            }
+
             const newProduct = {
                 title,
                 description,
@@ -59,11 +78,12 @@ class ProductController {
                 result: result
             });
         } catch (error) {
-            console.error('Error al agregar producto', error)
-            res.status(500).send({
-                status: 'error',
-                message: 'Error interno al agregar producto'
-            })
+            next(error)
+            // console.error('Error al agregar producto', error)
+            // res.status(500).send({
+            //     status: 'error',
+            //     message: 'Error interno al agregar producto'
+            // })
         }
     }
 

@@ -13,6 +13,7 @@ import MongoStore from "connect-mongo";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 import dotenv from "dotenv";
+import handlerError from "./middleware/errors/index.js";
 
 dotenv.config()
 
@@ -29,12 +30,11 @@ const hbs = handlebars.create({
 
 // const fileStore = FileStore(session)
 
-// connectDB()
 app.use(express.static(__dirname+'/public'));
 app.use(express.json());
 app.use(express.urlencoded({ extends: true}));
 app.use(logger('dev'));
-/* app.use(session({
+app.use(session({
     // store: new fileStore({
     //     path: './sessions',
     //     ttl: 100,
@@ -53,14 +53,16 @@ app.use(logger('dev'));
     saveUninitialized: false
 }))
 
+
+
 initializePassport();
 app.use(passport.initialize());
-app.use(passport.session()); */
+app.use(passport.session());
 
-// app.use((req, res, next) => {
-//     console.log("Datos del cuerpo:", req.body);
-//     next();
-// });
+app.use((req, res, next) => {
+    console.log("Datos del cuerpo:", req.body);
+    next();
+});
 
 app.engine('handlebars', hbs.engine)
 app.set("views", __dirname+ "/views")
@@ -72,6 +74,7 @@ app.post("/file", uploader.single('myFile'), (req, res)=> {
 })
 
 app.use(appRouter)
+app.use(handlerError)
 
 const httpServer = app.listen(PORT, (err) => {
     if(err) console.log(err)

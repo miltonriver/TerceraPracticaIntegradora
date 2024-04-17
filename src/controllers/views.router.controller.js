@@ -110,7 +110,6 @@ export class ViewProductController {
 
         try {
             const products = await this.viewsRouterService.get()
-            // console.log(products)
             res.render('productosActualizados', {
                 username: req.session.username,
                 productos: products,

@@ -1,5 +1,5 @@
 import express from "express";
-import logger from "morgan";
+// import logger from "morgan";
 import appRouter from "./routes/index.js";
 import handlebars from "express-handlebars";
 import __dirname, { uploader } from "./utils.js";
@@ -14,6 +14,7 @@ import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 import dotenv from "dotenv";
 import handlerError from "./middleware/errors/index.js";
+import addLogger  from "./utils/logger.js";
 
 dotenv.config()
 
@@ -33,7 +34,7 @@ const hbs = handlebars.create({
 app.use(express.static(__dirname+'/public'));
 app.use(express.json());
 app.use(express.urlencoded({ extends: true}));
-app.use(logger('dev'));
+// app.use(logger('dev'));
 app.use(session({
     // store: new fileStore({
     //     path: './sessions',
@@ -54,15 +55,18 @@ app.use(session({
 }))
 
 
-
 initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(addLogger)
+
+
 app.use((req, res, next) => {
-    console.log("Datos del cuerpo:", req.body);
+    req.logger.info("Datos del cuerpo:", req.body);
     next();
 });
+
 
 app.engine('handlebars', hbs.engine)
 app.set("views", __dirname+ "/views")
@@ -78,7 +82,7 @@ app.use(handlerError)
 
 const httpServer = app.listen(PORT, (err) => {
     if(err) console.log(err)
-    console.log(`Escuchando en el puerto ${PORT}`)
+    console.log(`Escuchando en el puerto ${PORT}`)//Quise cambiar este console.log por un logger y no me lo toma, lo mismo en otros archivos, me da error, que no es una función o undefined
 })
 
 const io = new Server(httpServer)
@@ -89,7 +93,6 @@ io.on('connection', socket => {
     console.log("El cliente está conectado")
 
     socket.on("addProduct",  async (productData) => {
-        // console.log("Este es el contenido de l lista de productos:", productData)
         const newProduct = await productsModel.create(productData)
         const productList = await productsModel.find()
         io.emit('productsList', productList)

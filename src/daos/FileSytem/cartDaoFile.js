@@ -50,7 +50,6 @@ class CartDaoFile {
                 products: []
             }
             carts.push(newCart)
-            //console.log(carts)
 
             await this.saveToFile()
             await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2), { encoding: 'utf-8' })
@@ -114,10 +113,5 @@ class CartDaoFile {
 }
 
 const cartsService = new CartDaoFile()
-
-// console.log(await cartsService.createCart())
-// console.log(cartsService.createCart())
-// console.log(await cartsService.getCarts())
-// console.log(await cartsService.getCartById(3))
 
 export default cartsService

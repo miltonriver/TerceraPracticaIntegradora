@@ -44,7 +44,6 @@ messagesRouter.put('/:mid', async (req, res) => {
         const newMessageData = req.body
 
         const originalMessage = await messagesModel.findById(mid)
-        // console.log(originalMessage)
 
         let newMessage;
         try {

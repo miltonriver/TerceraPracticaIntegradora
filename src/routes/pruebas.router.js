@@ -85,6 +85,21 @@ pruebasRouter.get("/mockingusers", (req, res) => {
     })
 })
 
+//Router de Winston logger, porque acá funciona sin hacer la importación y en los demás archivos no funciona??
+pruebasRouter.get('/loggerTest', (req, res) => {
+    req.logger.fatal('¡Alerta!, Error fatal producido')
+    req.logger.error('¡Alerta!, error del programa')
+    req.logger.warning('¡Alerta!, warning ejecutandose')
+    req.logger.info('Algún error puede estar afectando al sistema')
+    
+    if (process.env.MODO === "DESARROLLO") {
+        req.logger.http(`${req.method} en ${req.url}, visible solo en el entorno de DESARROLLO`)
+    req.logger.debug('Método visible solo en el entorno de DESARROLLO')
+    }
+
+    res.send('logger ejecutado')
+})
+
 pruebasRouter.get('/session', (req, res) => {
     if (req.session.counter) {
         req.session.counter++

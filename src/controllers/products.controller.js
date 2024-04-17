@@ -69,7 +69,6 @@ class ProductController {
                 status,
                 category
             }
-            console.log("Nuevo producto:", newProduct)
             const result = await this.productService.createProduct(newProduct)
 
             res.status(201).send({
@@ -79,11 +78,6 @@ class ProductController {
             });
         } catch (error) {
             next(error)
-            // console.error('Error al agregar producto', error)
-            // res.status(500).send({
-            //     status: 'error',
-            //     message: 'Error interno al agregar producto'
-            // })
         }
     }
 

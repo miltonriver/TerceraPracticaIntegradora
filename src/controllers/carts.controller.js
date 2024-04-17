@@ -20,7 +20,6 @@ class CartController {
         try {
             const { cid } = req.params
             const cartId = await this.cartService.getCart({ _id: cid })
-            // console.log(JSON.stringify(cartId, null, '\t'))
 
             if (cartId.length !== 0) {
                 res.status(200).send({
@@ -64,7 +63,6 @@ class CartController {
         try {
             const { cid, pid } = req.params
             const cart = await this.cartService.getCart({ _id: cid })
-            console.log("este es el contenido del carrito", cart)
 
             if (cart.products.length < 0) {
                 return res.status(400).send({
@@ -100,13 +98,9 @@ class CartController {
         try {
             const { cid } = req.params
             const productToAddToCart = req.body
-            // console.log("contenido que quiero actualizar:", productToAddToCart)
 
             const cartToUpdate = await this.cartService.updateCart({ _id: cid })
-            // console.log("contenido del carrito encontrado: ", cartToUpdate)
             cartToUpdate.products.push(productToAddToCart)
-            // console.log("contenido del array:", cartToUpdate.products)
-            console.log("contenido actualizado del carrito: ", cartToUpdate)
             await cartToUpdate.save()
 
             res.status(200).send({

@@ -12,7 +12,6 @@ class ProductsDaoFile {
     async readFile() {
         try {
             const dataProducts = await fs.promises.readFile(this.path, 'utf-8')
-            console.log(dataProducts);
             return JSON.parse(dataProducts)
         } catch (error) {
             return []
@@ -37,7 +36,6 @@ class ProductsDaoFile {
 
     async create(product) {
         try {
-            console.log('Iniciando operación AddProduct: ', product)
             if(!product.status){
                 product.status = true;
             }
@@ -136,10 +134,5 @@ class ProductsDaoFile {
 
 //Crear una instancia de la clase ProductsManager
 const productos = new ProductsDaoFile()
-// Mostrar la lista inicial de productos
-//console.log(productos.getProducts());
-
-//Agregar algunos productos
-// console.log(productos.addProduct(producto1));
 
 export default ProductsDaoFile

@@ -75,7 +75,6 @@ const initializePassport = () => {
         clientSecret: "12635beb449619a17e5b8a3d75707273a4c13933",
         callbackURL: "http://localhost:8080/api/sessions/githubcallback"
     }, async (accessToken, refreshToken, profile, done) => {
-        // console.log("profile: ", profile)
         console.log("Estrategia Github configurada correctamente")
         try {
             let user = await userModel.getBy(profile._json.login)

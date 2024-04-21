@@ -21,5 +21,6 @@ sessionsRouter.get('/githubcallback', passport.authenticate('github', {failureRe
 sessionsRouter.get('/current', authTokenMiddleware, sessionController.tokenMiddleware)
 sessionsRouter.post('/registerpassport', passport.authenticate('registerpassport', { failureRedirect: '/api/sessions/failregister' }), sessionController.registerPassport)
 sessionsRouter.post('/loginpassport', passport.authenticate('loginpassport', { failureRedirect: '/api/sessions/faillogin' }), sessionController.loginPassport)
+sessionsRouter.get('/restartPassword', sessionController.restartPassword)
 
 export default sessionsRouter

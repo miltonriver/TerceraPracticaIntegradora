@@ -9,7 +9,6 @@ class CartRepository {
     getCart    = async (filter) => await this.dao.findOne(filter)
     createCart = async (newCart) => {
         const newCartDto = new CartDto(newCart)
-        console.log("Nuevo carrito a agregar: ", newCartDto)
         return await this.dao.create(newCartDto)
     }
     updateCart = async (cid, cartToUpdate) => await this.dao.findByIdAndUpate({_id: cid}, cartToUpdate, {new: true})

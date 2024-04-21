@@ -3,6 +3,7 @@ import DAOFactory from "../daos/factory.js";
 import { createHash, isValidPassword } from "../utils/hashBcrypt.js";
 import generateToken from "../utils/jsonwebtoken.js";
 import productsModel from "../daos/Mongo/models/products.model.js";
+import { logger } from "../utils/logger.js";
 
 class SessionController {
     constructor() {
@@ -13,7 +14,6 @@ class SessionController {
         try {
             const { first_name, last_name, username, email, password, phone_number } = req.body
             const fullname = `${first_name} ${last_name}`
-            console.log("Nombre completo: ", fullname)
 
             if (!first_name || !last_name || !username || !email || !password) {
                 return res.send("Quedan campos sin llenar, por favor ingrese los campos que son obligatorios")
@@ -35,7 +35,7 @@ class SessionController {
                 // id: result._id
             })
 
-            console.log('token: ', token)
+            logger.info('token: ', token)
 
             /* res.status(200).send({
                 username: username,
@@ -63,7 +63,6 @@ class SessionController {
         try {
             const { username, password } = req.body
             const user = await this.sessionService.getBy(username)
-            console.log("mostrar el contenido de user", user)
 
             if (user.email === "adminCoder@coder.com") {
                 user.role = "admin",
@@ -87,17 +86,17 @@ class SessionController {
                 username: username,
                 id: user._id
             })
-            console.log("token: ", token)
+            logger.info("token: ", token)
 
             const products = await productsModel.find({})
-            res.render('productosActualizados', {
+            res.render('productosActualizados', {//hacer un redirect a views.router
                 username: username,
                 productos: products,
                 style: 'index.css'
             })
 
         } catch (error) {
-            console.log(error)
+            logger.error(error)
             res.send({
                 status: "error",
                 error: error.message,
@@ -137,7 +136,7 @@ class SessionController {
 
     failLogin = async (req, res) => {
         try {
-            console.log("Failed Strategy")
+            logger.warning("Failed Strategy")
             res.send({ error: 'falla al intentar loguearse' })
 
         } catch (error) {
@@ -215,6 +214,21 @@ class SessionController {
                 status: "error",
                 error: error.message
             })
+        }
+    }
+
+    restartPassword = async (req, res) => {
+        try {
+            logger.warning("Restablecer contraseña")
+            res.render('restartpassword', {
+                style: 'index.css'
+            })
+            
+        } catch (error) {
+            res.send({
+                status: "error",
+                error: error.message
+            })            
         }
     }
 }

@@ -19,7 +19,7 @@ const customLevelsOptions = {
     }
 }
 
-let logger;
+export let logger;
 if (process.env.MODO === "PRODUCCION"){
     logger = winston.createLogger({
         levels: customLevelsOptions.levels,

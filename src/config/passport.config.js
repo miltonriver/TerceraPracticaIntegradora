@@ -3,6 +3,7 @@ import local from "passport-local";
 import UserDaoMongo from "../daos/Mongo/userDaoMongo.js";
 import { createHash, isValidPassword } from "../utils/hashBcrypt.js";
 import GithubStrategy from "passport-github2";
+import { logger } from "../utils/logger.js";
 
 const LocalStrategy = local.Strategy
 const userModel = new UserDaoMongo()
@@ -13,10 +14,8 @@ const initializePassport = () => {
         // usernameField: 'username'
     }, async (req, username, password, done) => {
         const { first_name, last_name, email, phone_number } = req.body
-        console.log("Contenido de username: ", username)
         try {
             let user = await userModel.getBy(username)
-            console.log('Contenido de user: ', user)
 
             if (user) return done(null, false)
 
@@ -43,7 +42,7 @@ const initializePassport = () => {
         try {
             const user = await userModel.getBy(username)
             if(!user) {
-                console.log("usuario no encontrado")
+                logger.info("usuario no encontrado")
                 return done(null, false)
             }
 
@@ -75,10 +74,9 @@ const initializePassport = () => {
         clientSecret: "12635beb449619a17e5b8a3d75707273a4c13933",
         callbackURL: "http://localhost:8080/api/sessions/githubcallback"
     }, async (accessToken, refreshToken, profile, done) => {
-        console.log("Estrategia Github configurada correctamente")
+        logger.info("Estrategia Github configurada correctamente")
         try {
             let user = await userModel.getBy(profile._json.login)
-            console.log("Profile username github: ", profile.username)
             if(!user) {
                 let newUser = {
                     first_name: profile._json.name,
@@ -90,7 +88,6 @@ const initializePassport = () => {
                 }
 
                 let result = await userModel.create(newUser)
-                console.log("Contenido de la variable result: ", result)
                 return done(null, result)
             }
 

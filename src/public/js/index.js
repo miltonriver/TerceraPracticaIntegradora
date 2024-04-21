@@ -1,5 +1,7 @@
+import { logger } from "../../utils/logger.js";
+
 const socket = io();//configuración para poder usar socket del lado del cliente
-console.log('Cliente conectado al servidor de socket')
+logger.info('Cliente conectado al servidor de socket')
 
 socket.emit('message1', 'Me estoy comunicando desde un websocket!!')
 
@@ -26,7 +28,7 @@ function deleteProduct(productId) {
 
 function addProductToCart(pid) {
     socket.emit("addProductToCart", { _id: pid })
-    console.log(`Producto ${productId} agregado al carrito.`)
+    logger.info(`Producto ${productId} agregado al carrito.`)
 }
 
 socket.on('productsList', data => {
@@ -68,13 +70,12 @@ socket.on('productsList', data => {
             productList.appendChild(productContainer);
         });
     } else {
-        console.log(`Error: La estructura de datos de ${data} no es válida.`, productList);
+        logger.error(`Error: La estructura de datos de ${data} no es válida.`, productList);
     }
 })
 
 //botón para ocultar/mostrar contraseña en el login
 const pass = document.getElementById("pass")
-console.log("mostrar el contenido de:", pass)
 const icon = document.querySelector(".bx")
 
 icon.addEventListener("click", e => {
@@ -100,7 +101,6 @@ Swal.fire({
     allowOutsideClick: false//para cliquear afuera del modal y que este no se cierre
 }).then(result => {
     email = result.value
-    console.log("email:", email)
 })
 
 //lógica del chat
@@ -121,7 +121,7 @@ socket.on('messageLogs', data => {
         mensajes += `<li>${mensaje.email} dice: ${mensaje.message}</li>`
     })
     messageLogs.innerHTML = mensajes
-    console.log(mensajes)
+    logger.info(mensajes)
 })
 
 /* fetch(url, {

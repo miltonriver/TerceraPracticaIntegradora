@@ -1,5 +1,6 @@
 import { Router } from "express";
 import messagesModel from "../daos/Mongo/models/messages.model.js";
+import { logger } from "../utils/logger.js";
 
 const messagesRouter = Router()
 
@@ -12,7 +13,7 @@ messagesRouter.get('/', async (req, res) => {
             result: messages
         })
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         return error
     }
 })
@@ -33,7 +34,7 @@ messagesRouter.post('/', async (req, res) => {
         })
         
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         return error
     }
 })
@@ -62,7 +63,7 @@ messagesRouter.put('/:mid', async (req, res) => {
             result: result
         })        
     } catch (error) {
-        console.log(error)
+        logger.error(error)
         return error
     }
 })

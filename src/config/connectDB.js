@@ -2,6 +2,7 @@
 import MongoSingleton from "./singleton.js";
 import dotenv from "dotenv";
 import program from "../utils/commander.js";
+import { logger } from "../utils/logger.js";
 
 const { mode } = program.opts()
 
@@ -28,9 +29,9 @@ const connectDB = async () => {
         //await connect(process.env.MONGO_URL)//Conexión remota
         //await connect("mongodb://localhost:27017/MyDataBaseMilton") --> mongodb://127.0.0.1:27017/MyDataBaseMilton--Conexión local
         await MongoSingleton.getInstance(process.env.MONGO_URL)
-        console.log(`Trabajando en el entorno de ${process.env.MODO}`)
+        logger.info(`Trabajando en el entorno de ${process.env.MODO}`)
     } catch (error) {
-        console.log(error)
+        logger.error(error)
     }
 }
 

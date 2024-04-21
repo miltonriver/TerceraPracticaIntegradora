@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { logger } from '../../utils/logger.js';
 
 class CartDaoFile {
     constructor(FilePath = 'carrito.json') {
@@ -91,7 +92,7 @@ class CartDaoFile {
         const data = JSON.stringify(this.carts, null, 2);
         await fs.promises.writeFile(this.path, data, 'utf8')
             .then(() => {
-                console.log('Datos guardados en el archivo:', this.path);
+                logger.info('Datos guardados en el archivo:', this.path);
             })
             .catch((error) => {
                 console.error('Error al guardar datos en el archivo:', error);
@@ -102,7 +103,7 @@ class CartDaoFile {
         try {
             const data = fs.readFileSync(this.path, 'utf8');
             this.carts = JSON.parse(data);
-            console.log(`Datos cargados desde el archivo: "${this.path}"`);
+            logger.info(`Datos cargados desde el archivo: "${this.path}"`);
         } catch (error) {
             console.error('Error al cargar datos desde el archivo:', `El archivo "${this.path}" no está bien definido o no existe`);
             // Si hay un error al cargar desde el archivo, iniciar con un array vacío

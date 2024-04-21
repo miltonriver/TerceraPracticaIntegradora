@@ -9,7 +9,6 @@ class UserRepository {
     getUser    = async (username) => await this.dao.findOne(username)
     createUser = async (newUser) => {
         const newUserDto = new UserDto(newUser)
-        console.log("mostrar nuevo usuario a agregar", newUserDto)
         return await this.dao.create(newUserDto)
     }
     updateUser = async (uid, userToUpdate) => await this.dao.findByIdAndUpdate({_id: uid}, userToUpdate, {new: true})

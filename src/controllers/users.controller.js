@@ -2,6 +2,7 @@
 // import DAOFactory from "../daos/factory.js";
 // import UserDto from "../dto/userDto.js";
 import { userService } from "../services/index.js";
+import { logger } from "../utils/logger.js";
 
 class UserController {
     constructor(){
@@ -12,7 +13,7 @@ class UserController {
             const users = await this.userService.getUsers()
             res.send(users)
         } catch (error) {
-            console.log(error)
+            logger.error(error)
         }
     }
     
@@ -27,7 +28,7 @@ class UserController {
             })
             res.send('get user')
         } catch (error) {
-            console.log(error)
+            logger.error(error)
         }
     }
     
@@ -43,7 +44,6 @@ class UserController {
                 age,
                 phone_number
             }
-            console.log("Nuevo usuario: ", newUser)
     
             const result =await this.userService.createUser(newUser)
     
@@ -53,7 +53,7 @@ class UserController {
                 usersCreate: result
             })
         } catch (error) {
-            console.log(error)
+            logger.error(error)
         }
     }
     
@@ -69,7 +69,7 @@ class UserController {
                 result: result          
             })
         } catch (error) {
-            console.log(error)
+            logger.error(error)
         }
     }
     
@@ -82,7 +82,7 @@ class UserController {
                 message: `El usuario seleccionado ha sido eliminado exitosamente`
             })
         } catch (error) {
-            console.log(error)
+            logger.error(error)
         }
     }
 }

@@ -4,6 +4,7 @@ import { productService } from "../services/index.js";
 import CustomError from "../services/errors/CustomError.js";
 import generateProductErrorInfo from "../services/errors/info.js";
 import EErrors from "../services/errors/enums.js";
+import { logger } from "../utils/logger.js";
 
 // const products = []
 class ProductController {
@@ -21,7 +22,7 @@ class ProductController {
                 result: products
             })
         } catch (error) {
-            console.log(error)
+            logger.error(error)
             return error
         }
     }
@@ -36,7 +37,7 @@ class ProductController {
                 result: product
             })
         } catch (error) {
-            console.log(error)
+            logger.error(error)
             return error
         }
     }

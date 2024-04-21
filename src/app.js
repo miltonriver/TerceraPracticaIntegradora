@@ -14,7 +14,8 @@ import passport from "passport";
 import initializePassport from "./config/passport.config.js";
 import dotenv from "dotenv";
 import handlerError from "./middleware/errors/index.js";
-import addLogger  from "./utils/logger.js";
+import addLogger, { logger }  from "./utils/logger.js";
+
 
 dotenv.config()
 
@@ -81,8 +82,8 @@ app.use(appRouter)
 app.use(handlerError)
 
 const httpServer = app.listen(PORT, (err) => {
-    if(err) console.log(err)
-    console.log(`Escuchando en el puerto ${PORT}`)//Quise cambiar este console.log por un logger y no me lo toma, lo mismo en otros archivos, me da error, que no es una función o undefined
+    if(err) logger.error(err)
+    logger.info(`Escuchando en el puerto ${PORT}`)
 })
 
 const io = new Server(httpServer)
@@ -90,7 +91,7 @@ const io = new Server(httpServer)
 let mensajes = []
 
 io.on('connection', socket => {
-    console.log("El cliente está conectado")
+    logger.info("El cliente está conectado")
 
     socket.on("addProduct",  async (productData) => {
         const newProduct = await productsModel.create(productData)
@@ -110,7 +111,7 @@ io.on('connection', socket => {
     })
 
     socket.on("message1", (data) => {
-        console.log(data)
+        logger.info(data)
     })
 
     socket.on('message', async (data) => {
@@ -122,7 +123,7 @@ io.on('connection', socket => {
 
         if (!updatedMessages){
             const newUserMessages = await messagesModel.create({user: email, message})
-            console.log("Nuevo usuario creado:", newUserMessages.user)
+            logger.info("Nuevo usuario creado:", newUserMessages.user)
             return
         }
         let newMessage;
@@ -133,7 +134,6 @@ io.on('connection', socket => {
         }
 
         updatedMessages.message = message + "\n" + newMessage
-        console.log("Esto contiene updatedMessages: ", updatedMessages)
 
         const result = await updatedMessages.save()
 

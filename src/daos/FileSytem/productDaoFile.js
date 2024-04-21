@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { logger } from '../../utils/logger.js';
 
 const filePath = 'productos.json';
 class ProductsDaoFile {
@@ -41,19 +42,19 @@ class ProductsDaoFile {
             }
 
             if (!product.title || !product.description || !product.price || !product.thumbnail || !product.code || !product.stock || !product.category){
-                console.log(`Todos los campos del artículo con nombre "${product.title}" deben contener datos`);
+                logger.warning(`Todos los campos del artículo con nombre "${product.title}" deben contener datos`);
                 return `Todos los campos del artículo con nombre "${product.title}" deben contener datos`
             }
     
             const newProduct = await this.products.find(prod => prod.code === product.code);
             if (newProduct) {
-                console.log(`El código del artículo con nombre "${product.title}" no puede estar repetido`);
+                logger.warning(`El código del artículo con nombre "${product.title}" no puede estar repetido`);
                 return "No es posible cargar más de un producto con el mismo código"
             }
     
             product.id = (this.products.length + 1)* Math.random()
             this.products.push(product);
-            console.log(`Se agregó el artículo con nombre "${product.title}" al arreglo`);
+            logger.info(`Se agregó el artículo con nombre "${product.title}" al arreglo`);
     
             await this.saveToFile();
     
@@ -95,7 +96,7 @@ class ProductsDaoFile {
                 return `El producto cuyo ID es "${pid}" no existe, no se puede eliminar un producto que no existe`
             }
             if (eliminarProducto) {
-                console.log(`Se eliminó el artículo con ID "${pid}" del arreglo`)
+                logger.info(`Se eliminó el artículo con ID "${pid}" del arreglo`)
                 this.products = eliminarProducto
                 await this.saveToFile()
                 return this.products//eliminarProducto
@@ -112,7 +113,7 @@ class ProductsDaoFile {
         //console.log('Datos a guardar:', data); // Agregar esta línea
         await fs.promises.writeFile(this.path, data, 'utf8')
             .then(() => {
-                console.log('Datos guardados en el archivo:', this.path);
+                logger.info('Datos guardados en el archivo:', this.path);
             })
             .catch((error) => {
                 console.error('Error al guardar datos en el archivo:', error);
@@ -123,7 +124,7 @@ class ProductsDaoFile {
         try {
             const data = fs.readFileSync(this.path, 'utf8');
             this.products = JSON.parse(data);
-            console.log(`Datos cargados desde el archivo: "${this.path}"`);
+            logger.info(`Datos cargados desde el archivo: "${this.path}"`);
         } catch (error) {
             console.error('Error al cargar datos desde el archivo:', `El archivo "${this.path}" no está bien definido o no existe`);
             // Si hay un error al cargar desde el archivo, iniciar con un array vacío

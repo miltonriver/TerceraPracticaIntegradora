@@ -1,6 +1,7 @@
 // import UserDaoMongo from "../daos/Mongo/userDaoMongo.js";
 // import ProductDaoMongo from "../daos/Mongo/productsDaoMongo.js";
 import DAOFactory from "../daos/factory.js";
+import { logger } from "../utils/logger.js";
 
 export class ViewUserController {
     constructor(){
@@ -60,7 +61,7 @@ export class ViewUserController {
                 page,
                 totalPages
             } = await this.viewsRouterService.getUsersPaginate(parseInt(pageQuery) , parseInt(limit));
-            console.log(docs)
+            //console.log(docs)
             res.render('users', {
                 users: docs,
                 hasPrevPage,
@@ -73,7 +74,7 @@ export class ViewUserController {
             })
             
         } catch (error) {
-            console.log(error);
+            logger.error(error);
             res.render("Error al intentar obtener la lista de usuarios!");
             return;
         }
@@ -100,7 +101,7 @@ export class ViewProductController {
                 style: 'index.css'
             })
         } catch (error) {
-            console.log(error);
+            logger.error(error);
             res.render("Error al intentar obtener la lista de productos!");
             return;
         }
@@ -116,7 +117,7 @@ export class ViewProductController {
                 style: 'index.css'
             })
         } catch (error) {
-            console.log(error);
+            logger.error(error);
             res.render("Error al intentar obtener la lista de productos!");
             return;
         }
@@ -150,7 +151,7 @@ export class ViewProductController {
             })
             
         } catch (error) {
-            console.log(error);
+            logger.error(error);
             res.render("Error al intentar obtener la lista de productos!");
             return;
         }
@@ -164,7 +165,7 @@ export class ViewProductController {
                 style: 'index.css'
             })
         } catch (error) {
-            console.log(error);
+            logger.error(error);
             res.render("Error al intentar obtener la lista de productos!");
             return;
         }

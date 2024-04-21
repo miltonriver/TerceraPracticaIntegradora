@@ -1,6 +1,7 @@
 // import CartDaoMongo from "../daos/Mongo/cartsDaoMongo.js";
 // import DAOFactory from "../daos/factory.js";
 import { cartService } from "../services/index.js";
+import { logger } from "../utils/logger.js";
 
 class CartController {
     constructor() {
@@ -12,7 +13,7 @@ class CartController {
             const carts = await this.cartService.getCarts()
             res.send(carts)
         } catch (error) {
-            console.log(error)
+            logger.error(error)
         }
     }
 
@@ -125,7 +126,7 @@ class CartController {
             const { newQuantity } = req.body
             // log(`Valor de cid: ${cid}`)
             const cart = await this.cartService.getCart({ _id: cid })
-            console.log(JSON.stringify(cart, null, '\t'))
+            logger.info(JSON.stringify(cart, null, '\t'))
 
             if (!cart) {
                 return res.status(404).send({
@@ -144,7 +145,6 @@ class CartController {
             const productIndex = cart.products.findIndex(
                 (product) => product.product._id.toString() === pid
             );
-            console.log("contenido del carrito encontrado: ", productIndex)
 
             if (productIndex === -1) {
                 return res.status(404).send({
@@ -176,7 +176,7 @@ class CartController {
         try {
             const { cid } = req.params
             const deleteCart = await this.cartService.deleteCart({ _id: cid })
-            console.log(deleteCart)
+            logger.info(deleteCart)
 
             if (!deleteCart) {
                 return res.status(400).send({
@@ -203,7 +203,6 @@ class CartController {
         try {
             const { cid, pid } = req.params
             const cart = await this.cartService.getCart({ _id: cid })
-            console.log("este es el contenido del carrito", cart)
 
             if (!cart) {
                 return res.status(404).send({

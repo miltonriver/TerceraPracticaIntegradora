@@ -165,6 +165,11 @@ li{
     font-size: 25px;
 }
 
+.h4_password{
+    padding: 5px;
+    margin: 5px 0px 50px 0px;
+}
+
 .icon_cart_container{
     display: flex;
     align-items: center;
@@ -207,4 +212,16 @@ li{
 
 .login_link_footer:hover, .products_link_footer:hover{
     font-size: 26px;
+}
+
+.texto_libre{
+    font-size: 18px;
+    padding: 5px;
+    margin: 20px 0px;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; 
+}
+
+.h3_title{
+    font-size: 22px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }

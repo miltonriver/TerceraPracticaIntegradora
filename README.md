@@ -8,3 +8,9 @@ db.collection.find() sql - relacional excel
 - integrarlo a nuestra app
 -Para usar el debug depurador iniciar node con el siguiente comando: 
 --> DEBUG=myapp:carts npm run start:dev
+
+Instalación de mocha
+- npm i -D mocha
+// crear la carpeta test --> archivos example.test.js por cada archivo necesario
+
+minuto 02:55:00 video 21 para continuar el trabajo

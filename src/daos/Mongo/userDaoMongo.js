@@ -22,11 +22,11 @@ class UserDaoMongo {
     }
 
     async update(uid, userToUpdate){
-        return await userModel.findByIdAndUpdate({_id: uid}, userToUpdate, {new: true})
+        return await userModel.findOneAndUpdate({_id: uid}, userToUpdate, {new: true})
     }
     
     async delete(uid){
-        return await userModel.deleteOne({_id: uid})
+        return await userModel.findOneAndDelete(uid)
     }
 }
 

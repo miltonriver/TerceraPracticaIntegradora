@@ -1,5 +1,5 @@
 // import UserDaoMongo from "../daos/Mongo/userDaoMongo.js";
-// import DAOFactory from "../daos/factory.js";
+import DAOFactory from "../daos/factory.js";
 // import UserDto from "../dto/userDto.js";
 import { userService } from "../services/index.js";
 import { logger } from "../utils/logger.js";
@@ -8,27 +8,31 @@ class UserController {
     constructor(){
         this.userService = userService
     }
-    getUsers   = async (req, res) => {
+    
+    getUsers = async (req, res) => {
         try {
-            const users = await this.userService.getUsers()
-            res.send(users)
+            const users = await this.userService.getUsers();
+            res.send(users);
         } catch (error) {
-            logger.error(error)
+            logger.error(`Error al obtener el usuario: ${error.message}`);
+            logger.info("No se puede encontrar la lista de usuarios por un error desconocido");
+            res.status(500).send({ error: "Error al obtener usuarios" });
         }
-    }
+    };
     
     getUser    = async (req, res) => {
         try {
             const { username } = req.params
             const user = await this.userService.getUser(username)
+            logger.debug(user)
             res.json({
                 status: "success",
                 message: `Usuario ${user.first_name} ${user.last_name} encontrado`,
                 result: user
             })
-            res.send('get user')
         } catch (error) {
-            logger.error(error)
+            logger.error(error.message)
+            logger.info("No se puede encontrar el usuario por un error desconocido")
         }
     }
     
@@ -52,6 +56,7 @@ class UserController {
                 message: `El usuario ${first_name} ${last_name} ha sido creado con éxito`,
                 usersCreate: result
             })
+            logger.warning(`El usuario ${first_name} ${last_name} ha sido creado con éxito`)
         } catch (error) {
             logger.error(error)
         }
@@ -69,20 +74,63 @@ class UserController {
                 result: result          
             })
         } catch (error) {
-            logger.error(error)
+            logger.error(`Error al intentar actualizar el usuario ${error.message}`)
+            logger.warning("No se puede actualizar por un error desconocido")
         }
     }
     
+    // deleteUser = async (req, res) => {
+    //     try {
+    //         const { uid } = req.params
+    //         const userToDelete = await this.userService.getUser(uid)
+    //         logger.info(userToDelete)
+
+    //         if (!userToDelete) {
+    //             logger.warning(`El usuario de id:${uid} no existe en la base de datos`)
+    //             return res.status(404).send({
+    //                 status: 'error',
+    //                 message: 'El usuario seleccionado no existe'
+    //             });
+    //         }
+
+    //         this.userService.deleteUser({ _id: uid })
+    //         res.status(200).send({
+    //             status: 'success',
+    //             message: `El usuario seleccionado ha sido eliminado exitosamente`
+    //         })
+    //     } catch (error) {
+    //         logger.error(`Hay un problema al intentar eliminar el usuario seleccionado ${error.message}`)
+    //     }
+    // }
+
     deleteUser = async (req, res) => {
         try {
-            const { uid } = req.params
-            const result = await this.userService.deleteUser({ _id: uid })
+            const { username } = req.params
+            const userToDelete = await this.userService.getUser(username)
+            logger.info(userToDelete)
+
+            if (!userToDelete) {
+                logger.warning(`El usuario de ${username} no existe en la base de datos`)
+                return res.status(404).send({
+                    status: 'error',
+                    message: 'El usuario seleccionado no existe'
+                });
+            }
+
+            const userId = userToDelete._id
+
+            await this.userService.deleteUser(userId)
+
             res.status(200).send({
                 status: 'success',
-                message: `El usuario seleccionado ha sido eliminado exitosamente`
+                message: `El usuario ${username} ha sido eliminado exitosamente`
             })
         } catch (error) {
-            logger.error(error)
+            logger.error(`Hay un problema al intentar eliminar el usuario seleccionado ${error.message}`)
+            res.status(500).send({
+                status: 'error',
+                message: 'Hubo un problema al intentar eliminar el usuario'
+            })
         }
     }
 }

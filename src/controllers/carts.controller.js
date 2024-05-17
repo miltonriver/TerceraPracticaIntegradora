@@ -11,9 +11,14 @@ class CartController {
     getCarts            = async (req, res) => {
         try {
             const carts = await this.cartService.getCarts()
-            res.send(carts)
+            res.status(400).send({
+                status: "success",
+                message: 'Colección de carts exitosa',
+                carts
+            })
         } catch (error) {
-            logger.error(error)
+            logger.error(`Ocurrió un error inesperado al intentar acceder a la colección de carts`)
+            return
         }
     }
 
@@ -24,10 +29,12 @@ class CartController {
 
             if (cartId.length !== 0) {
                 res.status(200).send({
-                    status: "succes",
+                    status: "success",
+                    message: `El carrito de ID "${cartId._id}" se ha seleccionado correctamente`,
                     cartId
                 })
             }
+            logger.info(`El carrito de ID "${cartId._id}" ha sido seleccionado correctamente`)
 
         } catch (error) {
             res.status(400).send({
@@ -47,9 +54,10 @@ class CartController {
 
             res.status(201).send({
                 status: "success",
-                message: `El carrito ${result._id} ha sido agregado`,
+                message: `El carrito ID "${result._id}" ha sido agregado exitosamente`,
                 result: result
             })
+            logger.info(`El carrito ID "${result._id}" ha sido agregado exitosamente`)
 
         } catch (error) {
             res.status(500).send({
@@ -74,7 +82,7 @@ class CartController {
 
             const productToAdd = {
                 product: pid,
-                quantity: 15
+                quantity: 6
             }
 
             cart.products.push(productToAdd)
@@ -85,6 +93,7 @@ class CartController {
                 message: 'Producto agregado al carrito con éxito',
                 result: cart
             })
+            logger.info(`El producto de ID "${pid}" ha sido agregado al carrito con éxito`)
 
         } catch (error) {
             res.status(404).send({
@@ -100,7 +109,7 @@ class CartController {
             const { cid } = req.params
             const productToAddToCart = req.body
 
-            const cartToUpdate = await this.cartService.updateCart({ _id: cid })
+            const cartToUpdate = await this.cartService.updateCart(cid)
             cartToUpdate.products.push(productToAddToCart)
             await cartToUpdate.save()
 
@@ -109,9 +118,10 @@ class CartController {
                 message: `El carrito de ID ${cartToUpdate._id} ha sido actualizado`,
                 result: cartToUpdate
             })
+            logger.info(`El carrito de ID "${cid}" ha sido actualizado`)
 
         } catch (error) {
-            console.error('Error al intentar actualizar el carrito:', error);
+            console.error(`Error al intentar actualizar el carrito, ${error.message}`);
             res.status(400).send({
                 status: 'error',
                 message: 'Error interno al intentar actualizar el carrito'
@@ -125,8 +135,8 @@ class CartController {
             const { cid, pid } = req.params
             const { newQuantity } = req.body
             // log(`Valor de cid: ${cid}`)
-            const cart = await this.cartService.getCart({ _id: cid })
-            logger.info(JSON.stringify(cart, null, '\t'))
+            const cart = await this.cartService.getCart(cid)
+            logger.warning(JSON.stringify(cart, null, '\t'))
 
             if (!cart) {
                 return res.status(404).send({
@@ -141,16 +151,19 @@ class CartController {
                     message: 'El carrito está vacío',
                 })
             }
+            logger.debug(cart.products[0]._id)
 
             const productIndex = cart.products.findIndex(
-                (product) => product.product._id.toString() === pid
-            );
+                (product) => String(product._id) === String(pid)
+            )
+            logger.debug(productIndex)
 
             if (productIndex === -1) {
+                logger.error(`Producto con ID ${pid} no se encuentra en el carrito.`)
                 return res.status(404).send({
                     status: 'error',
-                    message: `Producto con ID ${pid} no encontrado en el carrito.`,
-                });
+                    message: `Producto con ID ${pid} no se encuentra en el carrito.`
+                })
             }
 
             cart.products[productIndex].quantity = newQuantity
@@ -161,13 +174,14 @@ class CartController {
                 message: `Cantidad del producto con ID ${pid} actualizada con éxito.`,
                 result: cart
             })
+            logger.info(`Cantidad del producto con ID ${pid} actualizada con éxito. La nueva cantidad es de "${newQuantity}"`)
 
         } catch (error) {
-            console.error('Error al intentar actualizar la cantidad del producto en el carrito:', error);
+            logger.error(`Error al intentar actualizar la cantidad del producto en el carrito: "${error}"`);
             return res.status(404).send({
                 status: 'error',
                 mesagge: 'Error interno al intentar actualizar la cantidad del producto en el carrito.',
-                result: error
+                result: error.message
             })
         }
     }
@@ -175,10 +189,10 @@ class CartController {
     deleteCart          = async (req, res) => {
         try {
             const { cid } = req.params
-            const deleteCart = await this.cartService.deleteCart({ _id: cid })
-            logger.info(deleteCart)
+            const deleteCart = await this.cartService.deleteCart(cid)
 
             if (!deleteCart) {
+                logger.info(`El carrito cuyo ID es "${cid}" no existe`)
                 return res.status(400).send({
                     status: 'Error',
                     message: `El carrito cuyo ID es "${cid}" no existe`,
@@ -190,8 +204,9 @@ class CartController {
                 status: 'success',
                 message: `El carrito de ID "${cid}" ha sido eliminado`
             })
+            logger.info(`El carrito de ID "${cid}" ha sido eliminado`)
         } catch (error) {
-            console.error('Error al intentar eliminar el carrito:', error);
+            logger.error('Error al intentar eliminar el carrito:', error.message);
             res.status(500).send({
                 status: error,
                 message: 'Error interno al intentar eliminar el carrito'
@@ -202,7 +217,8 @@ class CartController {
     deleteProductInCart = async (req, res) => {
         try {
             const { cid, pid } = req.params
-            const cart = await this.cartService.getCart({ _id: cid })
+            const cart = await this.cartService.getCart(cid)
+            // logger.debug(`Contenido de cart: ${cart}`)
 
             if (!cart) {
                 return res.status(404).send({
@@ -219,8 +235,9 @@ class CartController {
             }
 
             const productIndex = cart.products.findIndex(
-                (product) => product.product.toString() === pid
+                (product) => String(product._id) === String(pid)
             );
+            // logger.debug(`Contenido del índice: ${productIndex}`)
 
             cart.products.splice(productIndex, 1);
 
@@ -231,6 +248,7 @@ class CartController {
                 message: `El producto con ID ${pid} ha sido eliminado del carrito con ID ${cid}.`,
                 result: cart
             })
+            logger.info(`El producto con ID ${pid} ha sido eliminado del carrito con ID ${cid}.`)
         } catch (error) {
             res.status(404).send({
                 status: 'error',

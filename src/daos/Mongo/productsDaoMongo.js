@@ -2,7 +2,15 @@ import productModel from "./models/products.model.js"
 
 class ProductDaoMongo {
     async get(){
-        return await productModel.paginate({})
+        return await productModel.find({})
+    }
+
+    async getProductPaginate(page = 1, limit = 5){//comprobar funcionamiento
+        const options = {
+            page: page,
+            limit: limit
+        };
+        return await productModel.paginate({}, options)
     }
 
     async getBy(pid){

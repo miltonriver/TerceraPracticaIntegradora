@@ -1,18 +1,19 @@
 import CartDto from "../dto/cartDto.js";
+import CartDaoMongo from "../daos/Mongo/cartsDaoMongo.js";
 
 class CartRepository {
-    constructor(cartDao){
-        this.dao = cartDao
+    constructor(){
+        this.dao = new CartDaoMongo()
     }
 
-    getCarts   = async () => await this.dao.find()
-    getCart    = async (filter) => await this.dao.findOne(filter)
+    getCarts   = async () => await this.dao.get()
+    getCart    = async (filter) => await this.dao.getBy(filter)
     createCart = async (newCart) => {
         const newCartDto = new CartDto(newCart)
         return await this.dao.create(newCartDto)
     }
-    updateCart = async (cid, cartToUpdate) => await this.dao.findByIdAndUpate({_id: cid}, cartToUpdate, {new: true})
-    deleteCart = async (cid) => await this.dao.deleteOne({_id: cid})
+    updateCart = async (cid, cartToUpdate) => await this.dao.update({_id: cid}, cartToUpdate, {new: true})
+    deleteCart = async (cid) => await this.dao.delete({_id: cid})
 }
 
 export default CartRepository

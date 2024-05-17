@@ -11,4 +11,6 @@ class UserDto {
     }
 }
 
+//Mirar video minuto 01:40 caso de ser necesario para construir método estático
+
 export default UserDto

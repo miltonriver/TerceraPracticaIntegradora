@@ -34,5 +34,7 @@ const connectDB = async () => {
         logger.error(error)
     }
 }
+console.log("Persistence type:", configObject.persistence);
+
 
 export default connectDB

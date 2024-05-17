@@ -8,6 +8,6 @@ usersRouter.get   ('/', userController.getUsers)
 usersRouter.get   ('/:username', userController.getUser)
 usersRouter.post  ('/', userController.createUser)
 usersRouter.put   ('/:uid', userController.updateUser)
-usersRouter.delete('/:uid', userController.deleteUser)
+usersRouter.delete('/:username', userController.deleteUser)
 
 export default usersRouter

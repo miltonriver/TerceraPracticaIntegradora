@@ -1,5 +1,3 @@
-// import ProductDaoMongo from "../daos/Mongo/productsDaoMongo.js";
-// import DAOFactory from "../daos/factory.js";
 import { productService } from "../services/index.js";
 import CustomError from "../services/errors/CustomError.js";
 import generateProductErrorInfo from "../services/errors/info.js";
@@ -22,7 +20,7 @@ class ProductController {
                 result: products
             })
         } catch (error) {
-            logger.error(error)
+            logger.error(`No se puede conseguir la colección de productos debido a un error desconocido ${error.message}`)
             return error
         }
     }
@@ -33,11 +31,12 @@ class ProductController {
             const product = await this.productService.getProduct({ _id: pid })
             res.status(200).send({
                 status: 'succes',
-                message: `Producto ${product.title} con id "${pid}" encontrado`,
+                message: `Producto "${product.title}" con id "${pid}" encontrado`,
                 result: product
             })
+            logger.info(`El producto "${product.title}" con un valor de $${product.price} se encuentra actualmente en stock`)
         } catch (error) {
-            logger.error(error)
+            logger.error(`Se produjo un error desconocido al intentar encontrar el producto seleccionado ${error.message}`)
             return error
         }
     }
@@ -74,11 +73,13 @@ class ProductController {
 
             res.status(201).send({
                 status: "success",
-                message: `El producto de nombre ${newProduct.title} con código ${newProduct.code} ha sido agregado exitosamente`,
+                message: `El producto de nombre "${newProduct.title}" con código "${newProduct.code}" ha sido agregado exitosamente`,
                 result: result
-            });
+            })
+            logger.info(`El producto de nombre "${newProduct.title}" con código "${newProduct.code}" ha sido agregado exitosamente`)
         } catch (error) {
-            next(error)
+            logger.error(`Se produjo un error al intentar agregar el producto ${error.message}`)
+            return
         }
     }
 
@@ -86,8 +87,9 @@ class ProductController {
         try {
             const { pid } = req.params
             const productToUpdate = req.body
+            logger.warning(productToUpdate)
 
-            const result = await this.productService.updateProduct({ _id: pid }, productToUpdate)
+            const result = await this.productService.updateProduct( pid, productToUpdate)
 
             res.status(200).send({
                 status: 'succes',
@@ -95,7 +97,7 @@ class ProductController {
                 result: result
             })
         } catch (error) {
-            console.error('Error al intentar actualizar el producto', error)
+            console.error('Error al intentar actualizar el producto', error.message)
             res.status(500).send({
                 status: 'error',
                 message: 'Error interno al actualizar el producto'
@@ -106,7 +108,7 @@ class ProductController {
     deleteProduct = async (req, res) => {
         try {
             const { pid } = req.params
-            const deleteProduct = await this.productService.deleteProduct({ _id: pid })
+            const deleteProduct = await this.productService.deleteProduct(pid)
 
             if (!deleteProduct) {
                 return res.status(400).send({
@@ -122,7 +124,7 @@ class ProductController {
             })
 
         } catch (error) {
-            console.error('Error al intentar eliminar el producto:', error);
+            logger.error(`Error al intentar eliminar el producto: ${error.message}`);
             res.status(500).send({
                 status: error,
                 message: 'Error interno al intentar eliminar el producto'
